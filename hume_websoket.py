@@ -5,10 +5,10 @@ import json
 import sounddevice as sd
 
 # === (1) HumeのAPIキー ===
-API_KEY = "flNbQ4RkpfsxlPJlqg0GLvKnb69pUepBtiwu5vYgoGmJZHnz"  # ←あなたの「Project API Key」をここに！
+API_KEY = "d7bHjzu8EFPuGMeLe6oagmZSG8AGxqud2CRbEfrPJiIYuoYu"  # ←あなたの「Project API Key」をここに！
 
 # === (2) WebSocketエンドポイント ===
-HUME_WS_URL = "wss://api.hume.ai/v0/stream/models"
+HUME_WS_URL = f"wss://api.hume.ai/v0/stream/models?api_key={API_KEY}"
 
 # === (3) 音声設定 ===
 SAMPLE_RATE = 16000  # Hume推奨
@@ -24,7 +24,7 @@ async def stream_audio():
     # WebSocket接続を開く
     async with websockets.connect(
         HUME_WS_URL,
-        extra_headers={"Authorization": f"Bearer {API_KEY}.strip()"}
+        extra_headers={"Authorization": f"Bearer {API_KEY}"}
     ) as ws:
         print("Connected to Hume AI Real-time API")
 

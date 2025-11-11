@@ -1,18 +1,8 @@
-import asyncio
-import websockets
+import requests
 
-API_KEY = "あなたのAPIキー"
-url = "wss://api.hume.ai/v0/stream/prosody"
+API_KEY = "flNbQ4RkpfsxlPJlqg0GLvKnb69pUepBtiwu5vYgoGmJZHnz"
+url = "https://api.hume.ai/v0/models"
 
-async def test():
-    try:
-        async with websockets.connect(
-            url,
-            extra_headers={"Authorization": f"Bearer {API_KEY.strip()}"}
-        ) as ws:
-            print("✅ 接続成功！")
-    except Exception as e:
-        print("❌ 接続失敗:", e)
-
-asyncio.run(test())
-
+res = requests.get(url, headers={"Authorization": f"Bearer {API_KEY}"})
+print(res.status_code)
+print(res.text)
