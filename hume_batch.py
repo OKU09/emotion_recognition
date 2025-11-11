@@ -8,7 +8,7 @@ import json
 # API_KEY = os.environ.get("HUME_API_KEY")
 
 # 実験用：直接書いても動く（ただし安全ではない）
-API_KEY = "flNbQ4RkpfsxlPJlqg0GLvKnb69pUepBtiwu5vYgoGmJZHnz"   # <----ここに自身のAPIキーを書いてください！！！
+API_KEY = ""   # <----ここに自身のAPIキーを書いてください！！！
 
 BASE_URL = "https://api.hume.ai/v0/batch/jobs"
 HEADERS = {"X-Hume-Api-Key": API_KEY}
@@ -33,7 +33,7 @@ def submit_job_local(file_paths):
     resp.raise_for_status()
 
     job_id = resp.json()["job_id"]
-    print("✅ Submitted job:", job_id)
+    print("Submitted job:", job_id)
     return job_id
 
 # ---- (3) ステータス確認 ----
