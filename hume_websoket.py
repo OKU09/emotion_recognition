@@ -5,7 +5,7 @@ import json
 import sounddevice as sd
 
 # === (1) HumeのAPIキー ===
-API_KEY = "d7bHjzu8EFPuGMeLe6oagmZSG8AGxqud2CRbEfrPJiIYuoYu"  # ←あなたの「Project API Key」をここに！
+API_KEY = ""  # ←あなたの「Project API Key」をここに！
 
 # === (2) WebSocketエンドポイント ===
 HUME_WS_URL = f"wss://api.hume.ai/v0/stream/models?api_key={API_KEY}"
