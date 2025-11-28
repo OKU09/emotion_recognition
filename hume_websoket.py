@@ -10,7 +10,7 @@ from flask import Flask, jsonify
 import threading
 
 # === 設定 ===
-API_KEY = "1D46K9RzoijBjfFj3fPlTM82CmexgJ4Yk45GHsMIrGS4J0sU" # そのまま使用します
+API_KEY = "xCRVgzgdZm2dMI0jEt2bggAJ1ajvumUozr6STG8uMApdElgx"
 HUME_WS_URL = "wss://api.hume.ai/v0/stream/models"
 
 DEVICE_ID = 1  # マイク番号
@@ -34,23 +34,28 @@ def run_flask():
     """Flaskサーバーを起動する関数"""
     app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
 
-# === プルチックの基本8感情 ===
+
+# === プルチックの基本8感情 + neutral ===
 PLUTCHIK_EMOTIONS = [
     "Joy", "Trust", "Fear", "Surprise", 
-    "Sadness", "Disgust", "Anger", "Anticipation"
+    "Sadness", "Disgust", "Anger", "Anticipation", "neutral"
 ]
 
+# === 感情マッピング定義 ===
+# 3要素あるものは各-0.2し、neutral:0.6を追加
 EMOTION_MAP = {
     "Admiration": {"Trust":1.0},
     "Adoration": {"Trust":1.0},
-    "Aesthetic Appreciation": {"Joy":0.4, "Surprise":0.3, "Anticipation":0.3},
+    # 【変更】3要素: Joy(0.4->0.2), Surprise(0.3->0.1), Anticipation(0.3->0.1) + neutral(0.6)
+    "Aesthetic Appreciation": {"Joy":0.2, "Surprise":0.1, "Anticipation":0.1, "neutral": 0.6},
     "Amusement": {"Joy":1.0},
     "Anger": {"Anger":1.0},
     "Anxiety": {"Fear":0.5, "Anticipation":0.5},
     "Awe": {"Fear":0.5, "Surprise":0.5},
     "Awkwardness": {"Fear":1.0},
     "Boredom": {"Disgust":0.5, "Anger":0.5},
-    "Calmness": {"Fear":0.4, "Sadness":0.3, "Anticipation":0.3},
+    # 【変更】3要素: Fear(0.4->0.2), Sadness(0.3->0.1), Anticipation(0.3->0.1) + neutral(0.6)
+    "Calmness": {"Fear":0.2, "Sadness":0.1, "Anticipation":0.1, "neutral": 0.6},
     "Concentration": {"Anticipation":1.0},
     "Confusion": {"Fear":0.5, "Surprise":0.5},
     "Contemplation": {"Trust":0.5, "Anticipation":0.5},
@@ -61,10 +66,12 @@ EMOTION_MAP = {
     "Disappointment": {"Surprise":0.5, "Sadness":0.5},
     "Disgust": {"Disgust":1.0},
     "Distress": {"Sadness":0.5, "Disgust":0.5},
-    "Doubt": {"Fear":0.3, "Disgust":0.4, "Anticipation":0.3},
+    # 【変更】3要素: Fear(0.3->0.1), Disgust(0.4->0.2), Anticipation(0.3->0.1) + neutral(0.6)
+    "Doubt": {"Fear":0.1, "Disgust":0.2, "Anticipation":0.1, "neutral": 0.6},
     "Embarrassment": {"Fear":0.5, "Disgust":0.5},
     "Empathic Pain": {"Sadness":0.5, "Disgust":0.5},
-    "Entrancement": {"Joy":0.3, "Trust":0.4, "Anticipation":0.3},
+    # 【変更】3要素: Joy(0.3->0.1), Trust(0.4->0.2), Anticipation(0.3->0.1) + neutral(0.6)
+    "Entrancement": {"Joy":0.1, "Trust":0.2, "Anticipation":0.1, "neutral": 0.6},
     "Envy": {"Sadness":0.5, "Anger":0.5},
     "Excitement": {"Joy":1.0},
     "Fear": {"Fear":1.0},
@@ -76,7 +83,8 @@ EMOTION_MAP = {
     "Nostalgia": {"Trust":0.5, "Sadness":0.5},
     "Pain": {"Fear":0.5, "Disgust":0.5},
     "Pride": {"Anger":0.5, "Joy":0.5},
-    "Realization": {"Joy":0.3, "Trust":0.3, "Anticipation":0.4},
+    # 【変更】3要素: Joy(0.3->0.1), Trust(0.3->0.1), Anticipation(0.4->0.2) + neutral(0.6)
+    "Realization": {"Joy":0.1, "Trust":0.1, "Anticipation":0.2, "neutral": 0.6},
     "Relief": {"Trust":1.0},
     "Romance": {"Joy":1.0},
     "Sadness": {"Sadness":1.0},
