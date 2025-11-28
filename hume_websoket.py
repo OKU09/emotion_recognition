@@ -6,15 +6,33 @@ import sounddevice as sd
 import numpy as np
 import io
 import wave
+from flask import Flask, jsonify
+import threading
 
 # === 設定 ===
-API_KEY = "" # APIキーを入力してください
+API_KEY = "1D46K9RzoijBjfFj3fPlTM82CmexgJ4Yk45GHsMIrGS4J0sU" # そのまま使用します
 HUME_WS_URL = "wss://api.hume.ai/v0/stream/models"
 
 DEVICE_ID = 1  # マイク番号
 CHUNK_DURATION = 1.0  # 1秒ごとに区切る
 SAMPLE_RATE = 16000
 CHUNK_SIZE = int(SAMPLE_RATE * CHUNK_DURATION)
+
+# === Flask API 設定 ===
+app = Flask(__name__)
+
+# 最新の感情データを保存するグローバル変数（スレッド間で共有）
+# 初期値を入れておくと、サーバー起動確認がしやすくなります
+latest_emotion_data = {"status": "waiting_for_audio", "message": "まだ音声データを受信していません"}
+
+@app.route("/emotion/latest")
+def get_latest_emotion():
+    """最新の感情データをJSONで返すAPI"""
+    return jsonify(latest_emotion_data)
+
+def run_flask():
+    """Flaskサーバーを起動する関数"""
+    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
 
 # === プルチックの基本8感情 ===
 PLUTCHIK_EMOTIONS = [
@@ -65,13 +83,16 @@ EMOTION_MAP = {
     "Satisfaction": {"Joy":1.0},
     "Shame": {"Fear":0.5, "Disgust":0.5},
     "Surprise (negative)": {"Surprise":1.0},
-    "Surprise (positive)": {"Suprise":1.0},
+    "Surprise (positive)": {"Surprise":1.0},
     "Sympathy": {"Surprise":0.5, "Sadness":0.5},
     "Tiredness": {"Sadness":1.0},
     "Triumph": {"Joy":1.0},
 }
 
 async def stream_audio():
+    # 【重要】関数内でグローバル変数を書き換えるためにこの宣言が必須です
+    global latest_emotion_data
+    
     loop = asyncio.get_running_loop()
     running = True
     segment_count = 0
@@ -82,6 +103,7 @@ async def stream_audio():
             extra_headers={"X-Hume-Api-Key": API_KEY}
         ) as ws:
             print("=== 接続成功 ===")
+            print("APIサーバー: http://localhost:5000/emotion/latest")
             print("------------------------------------------------")
 
             models_config = {
@@ -132,25 +154,19 @@ async def stream_audio():
                                 emotions_raw = predictions[0]["emotions"]
                                 
                                 # --- 集計処理開始 ---
-                                # 8つの感情スコアの入れ物を用意
                                 plutchik_scores = {k: 0.0 for k in PLUTCHIK_EMOTIONS}
 
-                                # Humeの全感情をループして振り分け
                                 for hume_emotion in emotions_raw:
                                     name = hume_emotion["name"]
                                     score = hume_emotion["score"]
 
-                                    # マッピング定義にある場合のみ計算
                                     if name in EMOTION_MAP:
                                         mapping = EMOTION_MAP[name]
                                         for p_name, weight in mapping.items():
-                                            # スコア * 重みを加算
                                             plutchik_scores[p_name] += score * weight
 
                                 # --- パーセンテージ計算 ---
                                 total_score = sum(plutchik_scores.values())
-                                
-                                # ゼロ除算回避
                                 if total_score == 0:
                                     total_score = 1.0 
 
@@ -174,9 +190,13 @@ async def stream_audio():
                                         for name, score in sorted_plutchik
                                     ]
                                 }
+
+                                # 【更新】グローバル変数を更新
+                                latest_emotion_data = display_data
+                                
                                 segment_count += 1
 
-                                # JSONとして整形して表示
+                                # コンソール確認用
                                 print("\n" + json.dumps(display_data, indent=2, ensure_ascii=False))
 
                     except websockets.exceptions.ConnectionClosed:
@@ -190,6 +210,10 @@ async def stream_audio():
         print("\n終了しました")
 
 if __name__ == "__main__":
+    # Flaskを別スレッドで起動
+    api_thread = threading.Thread(target=run_flask)
+    api_thread.daemon = True
+    api_thread.start()
     try:
         asyncio.run(stream_audio())
     except KeyboardInterrupt:
