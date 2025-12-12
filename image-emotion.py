@@ -426,7 +426,7 @@ class CameraApp(QWidget):
             return jsonify(self.latest_emotion)
 
         api_thread = threading.Thread(
-        target=lambda: self.api.run(host="0.0.0.0", port=5000, debug=False)
+        target=lambda: self.api.run(host="0.0.0.0", port=5001, debug=False)
         )
         api_thread.setDaemon(True)
         api_thread.start()
@@ -619,10 +619,30 @@ class CameraApp(QWidget):
         self.fig.tight_layout()
         self.canvas.draw()
 
-        self.latest_emotion = {
-            emotion: float(self.emotion_values[emotion][-1])
-            for emotion in self.emotion_values
-        }
+        # image-emotion.py の update_emotion_plot メソッドの最終行付近
+
+        # 修正前:
+        # self.latest_emotion = {
+        #     emotion: float(self.emotion_values[emotion][-1])
+        #     for emotion in self.emotion_values
+        # }
+
+
+        # ★★★ ここからが API データ更新ロジックの開始です ★★★
+        self.latest_emotion = {}
+        for emotion in self.emotion_values:
+            # グラフ描画用配列の最新の値を取得
+            value = self.emotion_values[emotion][-1] 
+    
+            # 1. NaNチェック (np.isnanはNumPyが提供する関数)
+            if np.isnan(value):
+                # NaN（データなし）の場合は0.0を格納する
+                self.latest_emotion[emotion] = 0.0
+            else:
+                # 2. NumPyの float 型を Python 標準の float 型に変換
+                #    これにより、JSONエンコード時に dict や array として扱われるのを防ぎます。
+                self.latest_emotion[emotion] = float(value) 
+        # ★★★ 修正終了 ★★★
 
 def main():
     app = QApplication(sys.argv)

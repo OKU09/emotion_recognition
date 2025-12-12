@@ -32,7 +32,7 @@ def get_latest_emotion():
 
 def run_flask():
     """Flaskサーバーを起動する関数"""
-    app.run(host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+    app.run(host="0.0.0.0", port=5002, debug=False, use_reloader=False)
 
 
 # === ターゲット感情（指定順序） ===
@@ -195,7 +195,11 @@ async def stream_audio():
                                 }
 
                                 # 【更新】グローバル変数を更新
-                                latest_emotion_data = display_data
+                                latest_emotion_data = {
+                                    emotion["name"].lower(): float(emotion["percent"].replace("%", "")) / 100.0
+                                    for emotion in formatted_emotions
+                                }
+
                                 
                                 segment_count += 1
 
