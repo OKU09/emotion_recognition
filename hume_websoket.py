@@ -10,8 +10,9 @@ from flask import Flask, jsonify
 import threading
 
 # === 設定 ===
-API_KEY = "" # APIキー
-HUME_WS_URL = "wss://api.hume.ai/v0/stream/models"
+API_KEY = "xCRVgzgdZm2dMI0jEt2bggAJ1ajvumUozr6STG8uMApdElgx" # APIキー
+HUME_WS_URL = f"wss://api.hume.ai/v0/stream/models?api_key={API_KEY}"
+
 
 DEVICE_ID = 1  # マイク番号
 CHUNK_DURATION = 1.0  # 1秒ごとに区切る
@@ -103,8 +104,7 @@ async def stream_audio():
 
     try:
         async with websockets.connect(
-            HUME_WS_URL,
-            extra_headers={"X-Hume-Api-Key": API_KEY}
+        HUME_WS_URL
         ) as ws:
             print("=== 接続成功 ===")
             print("APIサーバー: http://localhost:5000/emotion/latest")
