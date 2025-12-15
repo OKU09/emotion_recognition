@@ -13,8 +13,38 @@ conda で環境構築することを強く推奨します．
 表情から感情を認識する場合は image-emotion.py を使用してください．
 事前に準備するものやコードに書き加えることはありませんが，それぞれのライブラリ，モデルのインストールに時間がかかります．conda で環境構築したものは動作していますが，venv では動作を確認できませんでした．
 
+以下にdiscordなどをもとにした実行手順を示します．
+
 # 実行手順
 
-## PART0 仮想環境構築
+## PART0 仮想環境構築(conda)
 
-1. まずは anaconda にアクセスします．
+1. まずは anaconda をダウンロードします.
+```Powershell
+Invoke-WebRequest -Uri "https://repo.anaconda.com/archive/Anaconda3-2025.06-0-Windows-x86_64.exe" -outfile ".\Downloads\Anaconda3-2025.06-0-Windows-x86_64.exe"
+```
+2. ダウンロードしたインストーラを実行します
+```Powershell
+Start-Process -FilePath ".\Downloads\Anaconda3-2025.06-0-Windows-x86_64.exe"
+```
+3. インストーラの指示に沿ってインストールを完了してください．
+4. 以下のコマンドが正しく動作すれば成功です．
+```Poershell
+conda info
+```
+4*. powershell等でエラーが出た場合，再起動を行ってください．それでも直らない場合は `anaconda pronpt`を使用してください．(anacondaがインストールされていればスタートメニューの検索で出てくると思います．)  
+  
+5. python3.11.3の環境を作ります．
+```Powershell
+conda create -n py311 python=3.11.3
+```
+6. 作成した環境をactivateします．
+```Powershell
+conda activate py311
+```
+6*. 今後は該当ファイルで6.を実行すれば大丈夫です．
+
+## PART1 音声分野
+
+1. [hume](https://www.hume.ai/) に会員登録をしてAPIキーを取得してください．
+1. github上にあるhume_websoket.pyをダウンロードしてください．
