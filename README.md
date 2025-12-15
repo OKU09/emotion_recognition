@@ -47,4 +47,14 @@ conda activate py311
 ## PART1 音声分野
 
 1. [hume](https://www.hume.ai/) に会員登録をしてAPIキーを取得してください．
-1. github上にあるhume_websoket.pyをダウンロードしてください．
+2. github上にあるhume_websoket.pyをダウンロードしてください．
+3. hume_websocket.py内部のAPIキーを取得したものに書き換えてください。(元々書いてあるものは無効なキーです。)
+4. hume_websocket.pyを実行します。初回は足りないライブラリ(websocket,sounddevice...)があるためエラーが出てくると思います。適宜ライブラリをインストールし、実行し直してください。
+```Powershell
+pip install ○○
+```
+もしくは、
+```Powershell
+python -m pip install ○○
+```
+5. 実行できたら成功です。声が検出されれば感情を出力します。また、hume apiは利用時間で料金がかかります。会員登録で20ドル分クレジットが貰えるのでそれを超えないように気をつけてください。残りのクレジットはhumeマイページのbillingのexpression measurementのタブにあります。
