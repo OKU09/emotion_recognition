@@ -47,7 +47,7 @@ conda activate py311
 ## PART1 音声分野
 
 1. [hume](https://www.hume.ai/) に会員登録をしてAPIキーを取得してください．
-2. github上にあるhume_websoket.pyをダウンロードしてください．
+2. github上にある`hume_websoket.py`をダウンロードしてください．
 3. hume_websocket.py内部のAPIキーを取得したものに書き換えてください。(元々書いてあるものは無効なキーです。)
 4. hume_websocket.pyを実行します。初回は足りないライブラリ(websocket,sounddevice...)があるためエラーが出てくると思います。適宜ライブラリをインストールし、実行し直してください。
 ```Powershell
@@ -58,3 +58,37 @@ pip install ○○
 python -m pip install ○○
 ```
 5. 実行できたら成功です。声が検出されれば感情を出力します。また、hume apiは利用時間で料金がかかります。会員登録で20ドル分クレジットが貰えるのでそれを超えないように気をつけてください。残りのクレジットはhumeマイページのbillingのexpression measurementのタブにあります。
+
+## PART2 画像分野
+
+1. github上にある`image-emotion.py`をダウンロードしてください．
+2. pip, setuptools, wheel を最新版にします．
+```Powershell
+python -m pip install --upgrade pip setuptools wheel
+```
+3. cmakeをインストールしてください．
+```Powershell
+pip install cmake
+```
+4. OpenCVなどをインストールしてください．
+```Powershell
+pip install opencv-python-headless numpy pandas scikit-learn matplotlib torch torchvision
+```
+5. py-featをインストールしてください(featライブラリとは別物です．)
+```Powershell
+pip install py-feat
+```
+6. scipyをバージョン指定でインストールしてください．
+```Powershell
+pip install "scipy==1.10.1"
+```
+
+7. image-emotion.pyを実行します。初回はまだ足りないライブラリ(PyQt5,pygetwindow...)があるためエラーが出てくると思います。適宜ライブラリをインストールし、実行し直してください。
+```Powershell
+pip install ○○
+```
+もしくは、
+```Powershell
+python -m pip install ○○
+```
+8. 実行できたら成功です。カメラによって顔が検出されれば感情を出力します。また，初回実行時にはモデルのライブラリがインストールされるため時間がかかります．インストール中に動作を止めるとエラーにつながるので，十分に時間があるときに実行してください．
