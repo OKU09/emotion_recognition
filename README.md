@@ -97,4 +97,22 @@ python -m pip install ○○
 ## PART3 文字起こし分野
 
 1. github上にあるkan.pyをダウンロードしてください．
-2. 
+2. [voskのモデル](https://alphacephei.com/vosk/models)をインストールします．日本語のsmallモデルである`vosk-model-small-ja-0.22.zip`をダウンロードし，解凍してください．
+3. [mizuiro-sakura](https://huggingface.co/Mizuiro-sakura/luke-japanese-large-sentiment-analysis-wrime/tree/main)で必要なファイル(`added_tokens.json`,`config.json`,`entity_vocab.json`,`sentencepiece.bpe.model`,`special_tokens_map.json`,`tokenizer_config.json`,`pytorch_model.bin`)をダウンロードして，一つのファイルにまとめてください．
+4. kan.pyのコードで，2.3.でダウンロードしたファイルのディレクトリを指定するように書き換えてください．
+5. kan.pyを実行します。初回はまだ足りないライブラリ(vosk,transformers,...)があるためエラーが出てくると思います。適宜ライブラリをインストールし、実行し直してください。
+```Powershell
+pip install ○○
+```
+もしくは、
+```Powershell
+python -m pip install ○○
+```
+6. 実行できたら成功です。音声からテキストを取り出し，感情を判定したものが出力されます．
+
+
+## PART4 重み付け統合
+
+1. github上にあるwighted_fusion.pyをダウンロードしてください．
+2. PART1~3でダウンロードした`hume_websocket.py` `image-emotion.py`,`kan.py`それぞれにflaskのポート番号を指定している場所(例 port=5000)があるのでそれぞれ5000,5001,5002いずれかを割り振ってください．(github上にあるコードはポート番号割り振り済みです．)
+3. PART1~3のコードを実行し，wighted_fusion.pyを実行するとそれぞれの感情が重み付け統合された値が出力されます．
